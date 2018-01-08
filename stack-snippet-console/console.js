@@ -102,7 +102,7 @@
             }
         }
 
-        function getPropertyEntry(name, value, enumerable) {
+        function getPropertyEntry(name, value, enumerable, failedAccess) {
             let li = document.createElement("li");
             li.classList.add("as-console-dictionary-entry");
             if (!enumerable) {
@@ -114,11 +114,11 @@
             li.appendChild(span);
             span = document.createElement("span");
             span.classList.add("as-console-dictionary-value");
-            try {
-                span.appendChild(domify(value));
-            } catch (err) {
-                span.textContent = err.message;
+            if (failedAccess) {
+                span.textContent = value;
                 span.classList.add("as-console-error");
+            } else {
+                span.appendChild(domify(value));
             }
             li.appendChild(span);
             return li;
@@ -158,7 +158,16 @@
             });
 
             for (let descriptor of descriptors) {
-                ul.appendChild(getPropertyEntry(descriptor.name, value[descriptor.name], descriptor.enumerable));
+
+                let propertyValue, failedAccess;
+
+                try {
+                    propertyValue = value[descriptor.name];
+                } catch (err) {
+                    propertyValue == err.message;
+                    failedAccess = true;
+                }
+                ul.appendChild(getPropertyEntry(descriptor.name, propertyValue, descriptor.enumerable, failedAccess));
             }
             
             if (typeof value !== "function") {
