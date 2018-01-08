@@ -159,7 +159,8 @@
 
             for (let descriptor of descriptors) {
 
-                let propertyValue, failedAccess;
+                let propertyValue,
+                    failedAccess;
 
                 try {
                     propertyValue = value[descriptor.name];
@@ -171,7 +172,7 @@
             }
             
             if (typeof value !== "function") {
-                let proto = Object.getPrototypeOf(value);
+                let proto = Object.getPrototypeOf(value);                
                 if (proto) {
                     ul.appendChild(getPropertyEntry("__proto__", proto, false));
                 }
